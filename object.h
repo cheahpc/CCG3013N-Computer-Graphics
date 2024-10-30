@@ -41,14 +41,15 @@ public:
 	// 2D transformation
 	void translate(GLfloat tX, GLfloat tY);
 	void rotate(GLfloat t, GLfloat pX, GLfloat pY);
+	void orbitTo(GLfloat anchorX, GLfloat anchorY, GLfloat radius, GLfloat angle);
 	void mirrorX();
 	void mirrorY();
 	void scale(GLfloat sX, GLfloat sY);
 	void scale(GLfloat scale);
 
 	// Utilities
-	void drawText(float x, float y, const char* text, float scale = 1.0f, float boldness = 1.0f);
-	void drawItalicText(float x, float y, const char* text, float scale = 1.0f, float italicAngle = 0.3f);
+	void drawText(float x, float y, const char *text, float scale = 1.0f, float boldness = 1.0f);
+	void drawItalicText(float x, float y, const char *text, float scale = 1.0f, float italicAngle = 0.3f);
 
 	void static glEndReset();
 
