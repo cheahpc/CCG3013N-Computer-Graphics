@@ -1,14 +1,14 @@
 #ifndef _OBJECT_CPP_ // If not defined
 #define _OBJECT_CPP_ // Define the class name
-#include "object.h" // Object class
-#include "dimen.h" // Dimension constants
-#include <string.h> // String manipulation
+#include "object.h"	 // Object class
+#include "dimen.h"	 // Dimension constants
+#include <string.h>	 // String manipulation
 #include <windows.h> // Windows API
-#include <stdio.h> // Standard Input Output
-#include <stdarg.h> // Variable Argument List
-#include "colour.h" // Colour constants
+#include <stdio.h>	 // Standard Input Output
+#include <stdarg.h>	 // Variable Argument List
+#include "colour.h"	 // Colour constants
 #include "strings.h" // String constants
-#include <cstdarg> // For variadic arguments
+#include <cstdarg>	 // For variadic arguments
 
 // Default constructor
 Object::Object() {}
@@ -118,21 +118,19 @@ void Object::drawCircle(GLfloat radius, GLfloat startDegree, GLfloat endDegree)
 	this->glEndReset();
 }
 
-void Object::drawIrregularRectangle(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2, 
-                                    GLfloat x3, GLfloat y3, GLfloat x4, GLfloat y4)
+void Object::drawIrregularRectangle(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2,
+									GLfloat x3, GLfloat y3, GLfloat x4, GLfloat y4)
 {
-    glPushMatrix(); // Save the current transformation state
+	glPushMatrix(); // Save the current transformation state
 
-    glBegin(GL_POLYGON); // Start drawing a polygon
-        glVertex2f(x1, y1); // Define vertex 1
-        glVertex2f(x2, y2); // Define vertex 2
-        glVertex2f(x3, y3); // Define vertex 3
-        glVertex2f(x4, y4); // Define vertex 4
-    glEnd(); // End the polygon drawing
+	glBegin(GL_POLYGON); // Start drawing a polygon
+	glVertex2f(x1, y1);	 // Define vertex 1
+	glVertex2f(x2, y2);	 // Define vertex 2
+	glVertex2f(x3, y3);	 // Define vertex 3
+	glVertex2f(x4, y4);	 // Define vertex 4
 
-    glPopMatrix(); // Restore the transformation state
+	this->glEndReset();
 }
-
 
 void Object::drawTorus(GLfloat radius, GLfloat thickness, GLfloat startDegree, GLfloat endDegree)
 {
@@ -288,6 +286,24 @@ void Object::rotate(GLfloat t, GLfloat pX, GLfloat pY)
 	glRotatef(-t, 0.0f, 0.0f, 1.0f);
 	glTranslated(-pX, -pY, 0);
 }
+
+void Object::orbitTo(GLfloat anchorX, GLfloat anchorY, GLfloat radius, GLfloat angle)
+{
+	if (angle < 0)
+		angle = 360 + angle;
+	else if (angle > 360)
+		angle = angle - 360;
+	GLfloat currentAngle = -angle * M_PI / 180;
+	// Offset 90 degree to counter the drawing rotation
+	currentAngle += 90 * M_PI / 180;
+	this->x = anchorX + radius * cos(currentAngle);
+	this->y = anchorY + radius * sin(currentAngle);
+
+	// Rotate the object to the angle
+	this->rotate(angle, anchorX, anchorY);
+	
+}
+
 void Object::mirrorX()
 {
 	glTranslated(this->x, this->y, 0);
@@ -313,40 +329,43 @@ void Object::scale(GLfloat scale)
 	this->scale(scale, scale);
 }
 
-void Object::drawText(float x, float y, const char* text, float scale, float boldness) {
-    glPushMatrix();
-    glTranslatef(x, y, 0);
+void Object::drawText(float x, float y, const char *text, float scale, float boldness)
+{
+	glPushMatrix();
+	glTranslatef(x, y, 0);
 	// Compress horizontal spacing slightly
-    glScalef(scale * 0.11f, scale * 0.1f, 1.0f);
-    glLineWidth(boldness);  // Controls boldness
-    
-    for (const char* c = text; *c != '\0'; c++) {
-        glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
-    }
-    glPopMatrix();
+	glScalef(scale * 0.11f, scale * 0.1f, 1.0f);
+	glLineWidth(boldness); // Controls boldness
+
+	for (const char *c = text; *c != '\0'; c++)
+	{
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
+	}
+	glPopMatrix();
 }
 
-void Object::drawItalicText(float x, float y, const char* text, float scale, float italicAngle) {
-    glPushMatrix();
-    glTranslatef(x, y, 0);
+void Object::drawItalicText(float x, float y, const char *text, float scale, float italicAngle)
+{
+	glPushMatrix();
+	glTranslatef(x, y, 0);
 	glRotatef(-11.25, 0, 0, 1);
-    
-    // Apply shear transformation for italic effect
-    GLfloat shearMatrix[16] = {
-        1.0f, italicAngle, 0.0f, 0.0f,   // italicAngle controls the slant
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-    glMultMatrixf(shearMatrix);
-    
-    glScalef(scale * 0.11f, scale * 0.1f, 1.0f);
+
+	// Apply shear transformation for italic effect
+	GLfloat shearMatrix[16] = {
+		1.0f, italicAngle, 0.0f, 0.0f, // italicAngle controls the slant
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f};
+	glMultMatrixf(shearMatrix);
+
+	glScalef(scale * 0.11f, scale * 0.1f, 1.0f);
 	glLineWidth(3.2f); // Controls boldness
-    
-    for (const char* c = text; *c != '\0'; c++) {
-        glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
-    }
-    glPopMatrix();
+
+	for (const char *c = text; *c != '\0'; c++)
+	{
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
+	}
+	glPopMatrix();
 }
 
 void Object::glEndReset()

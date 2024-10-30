@@ -34,24 +34,49 @@ void renderDashboardText()
 
 void renderSettingsIcon()
 {
-    glColor4f(COLOUR_BLACK);
+    glColor4f(COLOUR_BLACK); // Suggestions: Dark shade of gray for UI design
     settingsIcon.translate(505, 490);
-    settingsIcon.drawTorus(12, 6, 0, 365);
-    // Top
+    settingsIcon.drawTorus(12, 5, 0, 360);
+    // Get current position
+    GLfloat originalX = settingsIcon.x;
+    GLfloat originalY = settingsIcon.y;
+
+    // Define Trapezoid shape
+    int trapezoidHeight = 10;
+    int trapezoidWidthLong = 20;
+    int trapezoidWidthShort = 8;
+
+    // Radius offset for the trapezoid
+    int radiusOffset = 17;
+
+    // Top gear
+    settingsIcon.orbitTo(originalX, originalY, radiusOffset, 0);
+    int topLeftX = settingsIcon.x - trapezoidWidthLong / 2;
+    int topLeftY = settingsIcon.y - trapezoidHeight / 2;
+    int topRightX = settingsIcon.x + trapezoidWidthLong / 2;
+    int topRightY = settingsIcon.y - trapezoidHeight / 2;
+    int bottomRightX = settingsIcon.x + trapezoidWidthShort / 2;
+    int bottomRightY = settingsIcon.y + trapezoidHeight / 2;
+    int bottomLeftX = settingsIcon.x - trapezoidWidthShort / 2;
+    int bottomLeftY = settingsIcon.y + trapezoidHeight / 2;
     settingsIcon.drawIrregularRectangle(
-        1458.0f, 1043.0f, // Bottom Left
-        1473.0f, 1043.0f, // Bottom Right
-        1468.0f, 1050.0f, // Top Right   
-        1462.0f, 1050.0f  // Top Left
-    );
-    // Bottom
-    settingsIcon.drawIrregularRectangle(
-        1458.0f, 1000.0f, // Bottom Left
-        1473.0f, 1000.0f, // Bottom Right
-        1468.0f, 1007.0f, // Top Right   
-        1462.0f, 1007.0f  // Top Left
+        bottomLeftX, bottomLeftY,   // Bottom Left
+        bottomRightX, bottomRightY, // Bottom Right
+        topRightX, topRightY,       // Top Right
+        topLeftX, topLeftY          // Top Left
     );
 
+    for (int i = 45; i < 365; i+= 45)
+    {
+        settingsIcon.orbitTo(originalX, originalY, radiusOffset, i);
+        settingsIcon.drawIrregularRectangle(
+            bottomLeftX, bottomLeftY,   // Bottom Left
+            bottomRightX, bottomRightY, // Bottom Right
+            topRightX, topRightY,       // Top Right
+            topLeftX, topLeftY          // Top Left
+        );
+    }
+    
 }
 
 void renderSettingsText()
@@ -188,7 +213,6 @@ void renderWelcomeMessages()
     glColor4f(COLOUR_LIGHT_BLACK);
     WelcomeMessages.drawText(80, 850, "Welcome home Rei. The weather today is quite hot,", 2.2f, 3.2f);
     WelcomeMessages.drawText(80, 810, "please remember to keep yourself hydrated!", 2.2f, 3.2f);
-
 }
 
 void renderWeatherInfoText()
@@ -218,7 +242,6 @@ void renderTemperatureInfoText()
     TemperatureInfoText.drawText(580, 555, "Indoor", 2.2f, 3.2f);
     TemperatureInfoText.drawText(530, 515, "Temperature", 2.2f, 3.2f);
 }
-
 
 void renderAddDataText()
 {
@@ -254,7 +277,7 @@ void renderTemperatureInfoDashboard()
     glColor4f(COLOUR_LIGHT_BLUE);
     TemperatureInfoDashboard.drawTorus(150, 17, 230, 70); // Outer ring (use blue color)
     glColor4f(COLOUR_WHITE);
-    TemperatureInfoDashboard.drawCircle(120, 0, 360);     // Inner circle (white)
+    TemperatureInfoDashboard.drawCircle(120, 0, 360); // Inner circle (white)
     glColor4f(COLOUR_BLACK);
     TemperatureInfoDashboard.drawTorus(108, 7, 0, 360); // Inner ring (black)
 }
@@ -403,7 +426,8 @@ void renderMusicInfoText()
     MusicInfoText.drawItalicText(1630, 105, "Koala", 2.2f, 0.2f);
 }
 
-void renderMusicControl() {
+void renderMusicControl()
+{
     glColor4f(COLOUR_BLACK);
     MusicControl.translate(250, 500);
 }
@@ -465,6 +489,5 @@ void renderMoreIcon4()
     MoreIcon.translate(11, 0);
     MoreIcon.drawCircle(4, 0, 360);
 }
-
 
 #pragma endregion More Icon
